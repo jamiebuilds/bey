@@ -13,7 +13,7 @@ yarn add bey
 ```js
 import React from 'react';
 import { render } from 'react-dom';
-import { state, update, Subscribe } from '../src/bey';
+import { state, update, Subscribe } from 'bey';
 
 let counter = state({
   count: 0,
