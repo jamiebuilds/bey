@@ -3,8 +3,9 @@
 const React = require('react');
 const immer = require('immer').default;
 
-function state(currentState) {
+function state(initialState) {
   let listeners = [];
+  let currentState = initialState;
   return {
     get() {
       return currentState;
@@ -18,6 +19,9 @@ function state(currentState) {
     },
     off(listener) {
       listeners = listeners.filter(fn => fn !== listener);
+    },
+    reset() {
+      currentState = initialState;
     },
   };
 }
