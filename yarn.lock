@@ -3635,9 +3635,9 @@ pako@~1.0.5:
   version "1.0.6"
   resolved "https://registry.yarnpkg.com/pako/-/pako-1.0.6.tgz#0101211baa70c4bca4a0f63f2206e97b7dfaf258"
 
-parcel-bundler@^1.8.1:
+parcel@^1.8.1:
   version "1.8.1"
-  resolved "https://registry.yarnpkg.com/parcel-bundler/-/parcel-bundler-1.8.1.tgz#ac62d0690786f51d7f309694bab6856f685a6986"
+  resolved "https://registry.yarnpkg.com/parcel/-/parcel-1.8.1.tgz#8ec51964ca83f264f292c0de5d22f6d6420ba13a"
   dependencies:
     babel-code-frame "^6.26.0"
     babel-core "^6.25.0"
