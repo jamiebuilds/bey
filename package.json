@@ -26,6 +26,7 @@
     "babel-preset-flow": "^6.23.0",
     "babel-preset-react": "^6.24.1",
     "babel-register": "^6.26.0",
+    "parcel": "^1.8.1",
     "react-dom": "^16.3.2",
     "react-test-renderer": "^16.3.2"
   },

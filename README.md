@@ -48,6 +48,9 @@ function Counter() {
 render(<Counter/>, window.root);
 ```
 
+Run this example locally by [cloning the repo](https://help.github.com/articles/cloning-a-repository/)
+and running `yarn example` in the root directory.
+
 ## Guide
 
 ### `state()`
