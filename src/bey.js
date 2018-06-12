@@ -2,6 +2,7 @@
 'use strict';
 const React = require('react');
 const immer = require('immer').default;
+const shallowEqual = require('fbjs/lib/shallowEqual');
 
 function state(initialState) {
   let listeners = [];
@@ -37,10 +38,11 @@ class Subscribe extends React.Component {
     on: state => state,
   };
 
-  _hasUnmounted = false;
+  _shouldUpdate = false;
+  _state = this.getState();
 
   componentDidMount() {
-    this._currState = this.props.to.get();
+    this._shouldUpdate = true;
     this.props.to.on(this.onUpdate);
   }
 
@@ -52,23 +54,26 @@ class Subscribe extends React.Component {
   }
 
   componentWillUnmount() {
+    this._shouldUpdate = false;
     this.props.to.off(this.onUpdate);
-    this._hasUnmounted = true;
+  }
+
+  getState() {
+    return this.props.on(this.props.to.get());
   }
 
   onUpdate = () => {
-    let currState = this._currState;
-    let nextState = this.props.to.get();
-
-    this._currState = nextState;
-
-    if (this.props.on(nextState) !== this.props.on(currState)) {
+    let prevState = this._state;
+    let nextState = this.getState();
+    this._state = nextState;
+    if (!this._shouldUpdate) return;
+    if (!shallowEqual(nextState, prevState)) {
       this.setState({});
     }
   };
 
   render() {
-    return this.props.children(this.props.on(this.props.to.get()));
+    return this.props.children(this._state);
   }
 }
 

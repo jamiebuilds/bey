@@ -126,3 +126,83 @@ function Counter() {
 
 This also acts as an optimization when you have a large state object but only
 need to re-render when a nested value in that state object is updated.
+
+If you need multiple values, you can return an object:
+
+```js
+<Subscribe to={user} on={state => ({ name: state.name, username: state.username })}>
+  {({ name, username }) => <span>{name} (@{username})</span>}
+</Subscribe>
+```
+
+The same optimizations will apply using the same shallow equality check that
+React uses.
+
+### Calling actions
+
+Actions can be called at any time from any part of your app.
+
+```js
+let counter = state({ count: 0 });
+
+function increment() {
+  update(counter, state => { state.count++; });
+}
+
+function Increment() {
+  return <button onClick={increment}>+</button>;
+}
+```
+
+### Multiple instances of containers
+
+If you need to create multiple instances of containers, wrap your `state()`
+call in a factory:
+
+```js
+let createCounter = () => {
+  return state({ count: 0 });
+};
+```
+
+Remember that your methods for updating state are just functions, don't be
+afraid to write them however you need. So here we can pass the state object we
+are updating as a parameter.
+
+```js
+function increment(counter) {
+  update(counter, state => { state.count++; });
+}
+
+function decrement(counter) {
+  update(counter, state => { state.count--; });
+}
+```
+
+Then inside your components where you call those methods, pass the state
+objects in:
+
+```js
+function Counter(props) {
+  return (
+    <Subscribe to={props.counter} on={state => state.count}>
+      {count => (
+        <div>
+          <button onClick={() => decrement(props.counter)}>-</button>
+          <span>{count}</span>
+          <button onClick={() => increment(props.counter)}>+</button>
+        </div>
+      )}
+    </Subscribe>
+  );
+}
+
+function Counters(props) {
+  return (
+    <div>
+      <Counter counter={createCounter()}/>
+      <Counter counter={createCounter()}/>
+    </div>
+  );
+}
+```
