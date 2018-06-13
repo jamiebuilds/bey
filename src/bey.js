@@ -3,11 +3,13 @@
 const React = require('react');
 const immer = require('immer').default;
 const shallowEqual = require('fbjs/lib/shallowEqual');
+const Symbol_observable = require('symbol-observable');
 
 function state(initialState) {
   let listeners = [];
   let currentState = initialState;
-  return {
+
+  let emitter = {
     get() {
       return currentState;
     },
@@ -22,9 +24,22 @@ function state(initialState) {
       listeners = listeners.filter(fn => fn !== listener);
     },
     reset() {
-      currentState = initialState;
+      emitter.set(initialState);
+    },
+    subscribe(observer) {
+      emitter.on(observer.next);
+      return {
+        unsubscribe() {
+          emitter.off(observer.next);
+        },
+      };
+    },
+    [Symbol_observable]() {
+      return emitter;
     },
   };
+
+  return emitter;
 }
 
 function update(target, updater) {
