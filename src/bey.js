@@ -15,22 +15,18 @@ function state(initialState) {
     },
     set(nextState) {
       currentState = nextState;
-      listeners.forEach(listener => listener());
-    },
-    on(listener) {
-      listeners.push(listener);
-    },
-    off(listener) {
-      listeners = listeners.filter(fn => fn !== listener);
+      listeners.forEach(listener => listener(currentState));
     },
     reset() {
       emitter.set(initialState);
     },
     subscribe(observer) {
-      emitter.on(observer.next);
+      let listener = observer.next;
+      listeners.push(listener);
+      listener(currentState);
       return {
         unsubscribe() {
-          emitter.off(observer.next);
+          listeners = listeners.filter(fn => fn !== listener);
         },
       };
     },
@@ -54,32 +50,34 @@ class Subscribe extends React.Component {
   };
 
   _shouldUpdate = false;
-  _state = this.getState();
+  _state = null;
 
   componentDidMount() {
     this._shouldUpdate = true;
-    this.props.to.on(this.onUpdate);
+    this.subscribe();
   }
 
   componentDidUpdate(prevProps) {
     if (this.props.to !== prevProps.to) {
-      prevProps.to.off(this.onUpdate);
-      this.props.to.on(this.onUpdate);
+      this.subscribe();
     }
   }
 
   componentWillUnmount() {
     this._shouldUpdate = false;
-    this.props.to.off(this.onUpdate);
+    this._unsubscribe();
   }
 
-  getState() {
-    return this.props.on(this.props.to.get());
+  subscribe() {
+    if (this._unsubscribe) this._unsubscribe();
+    let observable = this.props.to[Symbol_observable]();
+    let subscription = observable.subscribe({ next: this.onUpdate });
+    this._unsubscribe = subscription.unsubscribe;
   }
 
-  onUpdate = () => {
+  onUpdate = data => {
     let prevState = this._state;
-    let nextState = this.getState();
+    let nextState = this.props.on(data);
     this._state = nextState;
     if (!this._shouldUpdate) return;
     if (!shallowEqual(nextState, prevState)) {
@@ -88,7 +86,11 @@ class Subscribe extends React.Component {
   };
 
   render() {
-    return this.props.children(this._state);
+    if (this._state !== null) {
+      return this.props.children(this._state);
+    } else {
+      return null;
+    }
   }
 }
 
