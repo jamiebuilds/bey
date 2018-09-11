@@ -5,7 +5,7 @@
   "main": "dist/bey.js",
   "repository": "https://github.com/jamiebuilds/bey",
   "author": "Jamie Kyle <me@thejameskyle.com>",
-  "license": "SEE LICENSE IN LICENSE",
+  "license": "MIT",
   "files": [
     "dist"
   ],
