@@ -58,7 +58,7 @@ test('Subscribe', t => {
   t.is(inst.toJSON(), '2');
 });
 
-test('Shallow Equal Optimization', t => {
+test('Subscribe nested value optimization', t => {
   let counter = state({ count: 1, name: "Nice Counter", stats: { isNice: true, rating: 8 } });
 
   let increment = () => {
