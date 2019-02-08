@@ -4,11 +4,21 @@ const React = require('react');
 const produce = require('immer').default;
 const shallowEqual = require('fbjs/lib/shallowEqual');
 
+function verifyMinified() {}
+
+// check inspired by immer
+const isDev = (typeof process !== "undefined"
+                      ? process.env.NODE_ENV !== "production"
+                      : verifyMinified.name === "verifyMinified");
+
 function state(initialState) {
   let listeners = [];
-  let currentState = produce({}, () => initialState);
+  let currentState = initialState;
   return {
     get() {
+      if(isDev){
+        return Object.freeze(currentState);
+      }
       return currentState;
     },
     set(nextState) {
