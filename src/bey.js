@@ -17,7 +17,7 @@ function state(initialState) {
   return {
     get() {
       if(isDev){
-        return Object.freeze(currentState);
+        return (Object.isFrozen(currentState)) ? currentState : Object.freeze(currentState);
       }
       return currentState;
     },
