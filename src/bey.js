@@ -1,12 +1,12 @@
 // @flow
 'use strict';
 const React = require('react');
-const immer = require('immer').default;
+const produce = require('immer').default;
 const shallowEqual = require('fbjs/lib/shallowEqual');
 
 function state(initialState) {
   let listeners = [];
-  let currentState = initialState;
+  let currentState = produce({}, () => initialState);
   return {
     get() {
       return currentState;
@@ -29,7 +29,7 @@ function state(initialState) {
 
 function update(target, updater) {
   let currState = target.get();
-  let nextState = immer(currState, updater);
+  let nextState = produce(currState, updater);
   if (nextState !== currState) target.set(nextState);
 }
 
