@@ -2,6 +2,7 @@
 'use strict';
 const test = require('ava');
 const React = require('react');
+const immer = require('immer').default;
 const render = require('react-test-renderer').create;
 const { state, update, Subscribe } = require('../src/bey');
 
@@ -57,3 +58,20 @@ test('Subscribe', t => {
   increment();
   t.is(inst.toJSON(), '2');
 });
+
+test('should return a frozen object on development', t => {
+  let counter = state({ count: 1 });
+
+  t.is(Object.isFrozen(counter.get()), true);
+});
+
+test('should return error while modifying a frozen object', t => {
+  let counter = state({ count: 1 });
+
+  try {    
+    counter.get().count = 0;
+  } catch(error){
+    t.is(error instanceof TypeError, true);
+  }
+});
+
